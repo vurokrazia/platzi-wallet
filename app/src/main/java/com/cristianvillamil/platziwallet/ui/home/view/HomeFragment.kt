@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cristianvillamil.platziwallet.R
 import com.cristianvillamil.platziwallet.ui.home.FavoriteTransfer
-import com.cristianvillamil.platziwallet.ui.home.FavoriteTransferAdapter
 import com.cristianvillamil.platziwallet.ui.home.HomeContract
 import com.cristianvillamil.platziwallet.ui.home.data.MessageFactory
 import com.cristianvillamil.platziwallet.ui.home.data.MessageFactory.Companion.TYPE_ERROR
 import com.cristianvillamil.platziwallet.ui.home.presenter.HomePresenter
 import com.cristianvillamil.platziwallet.ui.obserbable.AvailableBalanceObservable
-import com.cristianvillamil.platziwallet.ui.obserbable.Observer
+import androidx.lifecycle.Observer
+import com.cristianvillamil.platziwallet.ui.home.data.MessageFactory.Companion.TYPE_SUCCESS
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -35,8 +35,8 @@ class HomeFragment : Fragment(), HomeContract.View {
         favoriteTransferAdapter.setData(favoriteTransfer)
         val dialogFactory = MessageFactory()
         context?.let {
-            val errorDialog = dialogFactory.getDialog(it, TYPE_ERROR)
-            errorDialog.show();
+            val errorDialog = dialogFactory.getDialog(it, TYPE_SUCCESS)
+            errorDialog.show()
         }
     }
 
@@ -55,6 +55,7 @@ class HomeFragment : Fragment(), HomeContract.View {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         homePresenter = HomePresenter(this)
+        homePresenter?.retrieveFavoriteTransfers()
         circularProgress.setProgressWithAnimation(
             70f,
             1000,
@@ -65,12 +66,17 @@ class HomeFragment : Fragment(), HomeContract.View {
             .get()
             .load("https://media.licdn.com/dms/image/C4E03AQFcCuDIJl0mKg/profile-displayphoto-shrink_200_200/0?e=1583366400&v=beta&t=ymt3xgMe5bKS-2knNDL9mQYFksP9ZHne5ugIqEyRjZs")
             .into(profilePhotoImageView)
-        availableBalanceObservable.addObserver(object : Observer {
-            override fun notifyChange(newValue: Double) {
-                amountValueTextView.text = "$ $newValue"
-            }
-
+        /*
+            availableBalanceObservable.addObserver(object : Observer {
+                override fun notifyChange(newValue: Double) {
+                    amountValueTextView.text = "$ $newValue"
+                }
+            })
+        */
+        homePresenter!!.getPercentageLiveData().observe(this, Observer<String> { value ->
+            percentageText.text = value
         })
+        //#percentageText
     }
 
     private fun initRecyclerView() {

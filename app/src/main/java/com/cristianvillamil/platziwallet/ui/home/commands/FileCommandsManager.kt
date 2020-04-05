@@ -2,9 +2,9 @@ package com.cristianvillamil.platziwallet.ui.home.commands
 
 import java.lang.RuntimeException
 
-class FileCommandasManager {
+class FileCommandsManager {
     private val commands: HashMap<String, FileCommand> = HashMap()
-    fun putComand(commandName: String, fileCommand: FileCommand){
+    fun putCommand(commandName: String, fileCommand: FileCommand){
         commands[commandName] = fileCommand
     }
     fun getCommand(commandName: String) : FileCommand {

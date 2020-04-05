@@ -5,7 +5,7 @@ class AvailableBalanceObservable : Observable {
     private var ammount: Double = 0.0
     fun changeAmmount(newValue: Double){
         ammount = newValue
-        notifyIbservers(ammount)
+        notifyObservers(ammount)
     }
     override fun addObserver(observer: Observer) {
         ammountObserverList.add(observer)
@@ -15,7 +15,7 @@ class AvailableBalanceObservable : Observable {
         ammountObserverList.remove(observer)
     }
 
-    override fun notifyIbservers(newValue: Double) {
+    override fun notifyObservers(newValue: Double) {
         ammountObserverList.forEach{
             it.notifyChange(newValue)
         }
